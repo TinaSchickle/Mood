@@ -1,6 +1,8 @@
 import { FIELDS, optionsFor } from '../config.js'
 import { todayKey, addDays, longLabel, cycleDay } from '../dates.js'
 import OptionGroup from './OptionGroup.jsx'
+import MultiGroup from './MultiGroup.jsx'
+import TextField from './TextField.jsx'
 
 export default function EntryTab({ state, setState, date, setDate }) {
   const entry = state.entries[date] || {}
@@ -81,18 +83,42 @@ export default function EntryTab({ state, setState, date, setDate }) {
       </div>
 
       {/* All the optional fields */}
-      {FIELDS.map((f) => (
-        <OptionGroup
-          key={f.key}
-          label={f.label}
-          options={optionsFor(f, state)}
-          value={entry[f.key] ?? null}
-          color={f.color}
-          onChange={(v) => setField(f.key, v)}
-          editable={f.editable}
-          onAddOption={addMoodOption}
-        />
-      ))}
+      {FIELDS.map((f) => {
+        if (f.type === 'text') {
+          return (
+            <TextField
+              key={f.key}
+              label={f.label}
+              value={entry[f.key] ?? null}
+              onChange={(v) => setField(f.key, v)}
+            />
+          )
+        }
+        if (f.type === 'multi') {
+          return (
+            <MultiGroup
+              key={f.key}
+              label={f.label}
+              options={optionsFor(f, state)}
+              value={entry[f.key] ?? null}
+              color={f.color}
+              onChange={(v) => setField(f.key, v)}
+            />
+          )
+        }
+        return (
+          <OptionGroup
+            key={f.key}
+            label={f.label}
+            options={optionsFor(f, state)}
+            value={entry[f.key] ?? null}
+            color={f.color}
+            onChange={(v) => setField(f.key, v)}
+            editable={f.editable}
+            onAddOption={addMoodOption}
+          />
+        )
+      })}
 
       <p className="text-xs text-stone-500 mt-4">
         Everything is optional and saved automatically on this device.

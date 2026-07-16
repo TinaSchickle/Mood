@@ -31,6 +31,21 @@ export const FIELDS = [
     color: '#fbbf24',
   },
   {
+    key: 'sportOverall',
+    label: 'Sport (overall)',
+    options: ['no', 'low movement', 'yes'],
+    chart: true,
+    color: '#4ade80',
+  },
+  {
+    key: 'sportSpecific',
+    label: 'Sport (what)',
+    options: ['volleyball', 'gym', 'home gym', 'running'],
+    type: 'multi',
+    chart: false,
+    color: '#86efac',
+  },
+  {
     key: 'bloating',
     label: 'Bloating',
     options: ['no', 'little', 'medium', 'a lot'],
@@ -43,6 +58,13 @@ export const FIELDS = [
     options: ['flat', 'little belly', 'korea kugel'],
     chart: true,
     color: '#34d399',
+  },
+  {
+    key: 'face',
+    label: 'Face',
+    options: ['bad', 'few pimples', 'clean'],
+    chart: true,
+    color: '#38bdf8',
   },
   {
     key: 'stuhlgang',
@@ -64,6 +86,13 @@ export const FIELDS = [
     options: ['no', 'yes', 'self'],
     chart: true,
     color: '#e879f9',
+  },
+  {
+    key: 'food',
+    label: 'Food (what I ate)',
+    type: 'text',
+    chart: false,
+    color: '#facc15',
   },
 ]
 
