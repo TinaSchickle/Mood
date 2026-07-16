@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { load, save } from './storage.js'
 import { todayKey } from './dates.js'
+import { isCloudConfigured, fetchAll, upsertDay, upsertOptions, subscribe } from './cloud.js'
 import EntryTab from './components/EntryTab.jsx'
 import Dashboard from './components/Dashboard.jsx'
 
@@ -8,12 +9,97 @@ export default function App() {
   const [state, setState] = useState(load)
   const [tab, setTab] = useState('entry')
   const [date, setDate] = useState(todayKey())
+  // 'off' (no cloud) | 'syncing' | 'ok' | 'error'
+  const [cloud, setCloud] = useState(isCloudConfigured ? 'syncing' : 'off')
   const fileInput = useRef(null)
+  const pushTimers = useRef({})
 
-  // Persist on every change.
+  // Persist locally on every change (works offline / as a cache).
   useEffect(() => {
     save(state)
   }, [state])
+
+  // Initial cloud pull + live subscription.
+  useEffect(() => {
+    if (!isCloudConfigured) return
+    let cancelled = false
+
+    ;(async () => {
+      try {
+        const remote = await fetchAll()
+        if (cancelled || !remote) return
+        setState((local) => {
+          const entries = { ...local.entries, ...remote.entries } // cloud wins per day
+          const moodOverallOptions = remote.moodOverallOptions?.length
+            ? remote.moodOverallOptions
+            : local.moodOverallOptions
+          // Push up any days that only existed locally (e.g. entered offline).
+          for (const [d, v] of Object.entries(local.entries)) {
+            if (!(d in remote.entries)) upsertDay(d, v).catch(() => {})
+          }
+          if (!remote.moodOverallOptions?.length) upsertOptions(moodOverallOptions).catch(() => {})
+          return { entries, moodOverallOptions }
+        })
+        setCloud('ok')
+      } catch (err) {
+        console.warn('Cloud sync unavailable, using local storage only:', err.message)
+        if (!cancelled) setCloud('error')
+      }
+    })()
+
+    const unsub = subscribe(async () => {
+      try {
+        const remote = await fetchAll()
+        if (cancelled || !remote) return
+        setState((local) => ({
+          entries: { ...local.entries, ...remote.entries },
+          moodOverallOptions: remote.moodOverallOptions?.length
+            ? remote.moodOverallOptions
+            : local.moodOverallOptions,
+        }))
+      } catch {
+        /* ignore transient realtime refetch errors */
+      }
+    })
+
+    return () => {
+      cancelled = true
+      unsub()
+    }
+  }, [])
+
+  // Debounced push of a single day to the cloud (the food textarea fires often).
+  function pushDaySoon(d, data) {
+    if (!isCloudConfigured) return
+    clearTimeout(pushTimers.current[d])
+    pushTimers.current[d] = setTimeout(() => {
+      upsertDay(d, data)
+        .then(() => setCloud((c) => (c === 'off' ? c : 'ok')))
+        .catch((err) => {
+          console.warn('Could not sync day', d, err.message)
+          setCloud('error')
+        })
+    }, 500)
+  }
+
+  // Merge a patch into a given day and sync it.
+  function updateDay(d, patch) {
+    setState((s) => {
+      const next = { ...(s.entries[d] || {}), ...patch }
+      pushDaySoon(d, next)
+      return { ...s, entries: { ...s.entries, [d]: next } }
+    })
+  }
+
+  function addMoodOption(opt) {
+    setState((s) => {
+      const opts = s.moodOverallOptions || []
+      if (opts.includes(opt)) return s
+      const moodOverallOptions = [...opts, opt]
+      if (isCloudConfigured) upsertOptions(moodOverallOptions).catch(() => setCloud('error'))
+      return { ...s, moodOverallOptions }
+    })
+  }
 
   function exportData() {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' })
@@ -33,10 +119,15 @@ export default function App() {
       try {
         const parsed = JSON.parse(reader.result)
         if (parsed && parsed.entries) {
-          setState({
+          const next = {
             entries: parsed.entries,
             moodOverallOptions: parsed.moodOverallOptions || state.moodOverallOptions,
-          })
+          }
+          setState(next)
+          if (isCloudConfigured) {
+            for (const [d, v] of Object.entries(next.entries)) upsertDay(d, v).catch(() => {})
+            upsertOptions(next.moodOverallOptions).catch(() => {})
+          }
         } else {
           alert('That file does not look like a Mood Tracker export.')
         }
@@ -51,7 +142,10 @@ export default function App() {
   return (
     <div className="min-h-screen">
       <header className="max-w-2xl mx-auto px-4 pt-5 pb-1 flex items-center justify-between">
-        <h1 className="text-lg font-bold text-stone-100">🌸 Mood Tracker</h1>
+        <div className="flex items-center gap-2">
+          <h1 className="text-lg font-bold text-stone-100">🌸 Mood Tracker</h1>
+          <SyncBadge status={cloud} />
+        </div>
         <div className="flex gap-1 text-xs">
           <button
             onClick={exportData}
@@ -76,12 +170,17 @@ export default function App() {
       </header>
 
       {tab === 'entry' ? (
-        <EntryTab state={state} setState={setState} date={date} setDate={setDate} />
+        <EntryTab
+          state={state}
+          date={date}
+          setDate={setDate}
+          updateDay={updateDay}
+          addMoodOption={addMoodOption}
+        />
       ) : (
         <Dashboard state={state} />
       )}
 
-      {/* Bottom tab bar */}
       <nav className="fixed bottom-0 inset-x-0 bg-[#15151c] border-t border-white/10">
         <div className="max-w-2xl mx-auto grid grid-cols-2">
           <TabButton active={tab === 'entry'} onClick={() => setTab('entry')} label="Track" icon="✍️" />
@@ -94,6 +193,21 @@ export default function App() {
         </div>
       </nav>
     </div>
+  )
+}
+
+function SyncBadge({ status }) {
+  if (status === 'off') return null
+  const map = {
+    syncing: { text: 'Syncing…', color: '#a8a29e' },
+    ok: { text: '● Synced', color: '#34d399' },
+    error: { text: '● Local only', color: '#fbbf24' },
+  }
+  const s = map[status] || map.syncing
+  return (
+    <span className="text-[11px]" style={{ color: s.color }} title="Cross-device sync status">
+      {s.text}
+    </span>
   )
 }
 

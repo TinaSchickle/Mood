@@ -4,28 +4,16 @@ import OptionGroup from './OptionGroup.jsx'
 import MultiGroup from './MultiGroup.jsx'
 import TextField from './TextField.jsx'
 
-export default function EntryTab({ state, setState, date, setDate }) {
+export default function EntryTab({ state, date, setDate, updateDay, addMoodOption }) {
   const entry = state.entries[date] || {}
   const day = cycleDay(state.entries, date)
 
   function setField(key, value) {
-    setState((s) => {
-      const cur = s.entries[date] || {}
-      const next = { ...cur, [key]: value }
-      return { ...s, entries: { ...s.entries, [date]: next } }
-    })
+    updateDay(date, { [key]: value })
   }
 
   function togglePeriodStart() {
     setField('periodStart', !entry.periodStart)
-  }
-
-  function addMoodOption(opt) {
-    setState((s) => {
-      const opts = s.moodOverallOptions || []
-      if (opts.includes(opt)) return s
-      return { ...s, moodOverallOptions: [...opts, opt] }
-    })
   }
 
   const isToday = date === todayKey()
