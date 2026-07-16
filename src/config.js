@@ -2,66 +2,76 @@
 //
 // `options`      – the ordered list of choices (low → high where it matters).
 //                  `null` means the options are user-editable (stored in state).
+// `type`         – 'single' (pills, default), 'multi' (checkboxes) or 'text'.
 // `chart`        – whether this field gets its own dashboard diagram.
 // `color`        – line/dot colour for the chart (never pure red – red is
 //                  reserved for "no value on this day" markers).
+// `emoji`        – a friendly icon shown next to the label.
 export const DEFAULT_MOOD_OVERALL = ['negative', 'neutral', 'positive']
 
 export const FIELDS = [
   {
     key: 'moodOverall',
-    label: 'Mood (overall)',
+    label: 'Mood',
+    emoji: '🌈',
     options: null, // editable – see DEFAULT_MOOD_OVERALL / state.moodOverallOptions
     editable: true,
     chart: true,
-    color: '#a78bfa',
+    color: '#a855f7',
   },
   {
     key: 'moodDetailed',
-    label: 'Mood (detailed)',
+    label: 'Mood in detail',
+    emoji: '💭',
     options: ['happy', 'irritable', 'sad'],
     chart: false,
     color: '#f472b6',
   },
   {
     key: 'energy',
-    label: 'Energy level',
+    label: 'Energy',
+    emoji: '⚡',
     options: ['no energy', 'low energy', 'neutral', 'high energy'],
     chart: true,
-    color: '#fbbf24',
+    color: '#f59e0b',
   },
   {
     key: 'sportOverall',
-    label: 'Sport (overall)',
+    label: 'Sport',
+    emoji: '🤸‍♀️',
     options: ['no', 'low movement', 'yes'],
     chart: true,
-    color: '#4ade80',
+    color: '#22c55e',
   },
   {
     key: 'sportSpecific',
-    label: 'Sport (what)',
+    label: 'What sport',
+    emoji: '🏐',
     options: ['volleyball', 'gym', 'home gym', 'running'],
     type: 'multi',
     chart: false,
-    color: '#86efac',
+    color: '#4ade80',
   },
   {
     key: 'bloating',
     label: 'Bloating',
+    emoji: '🎈',
     options: ['no', 'little', 'medium', 'a lot'],
     chart: true,
-    color: '#22d3ee',
+    color: '#06b6d4',
   },
   {
     key: 'belly',
     label: 'Belly',
+    emoji: '🫃',
     options: ['flat', 'little belly', 'korea kugel'],
     chart: true,
-    color: '#34d399',
+    color: '#14b8a6',
   },
   {
     key: 'face',
     label: 'Face',
+    emoji: '✨',
     options: ['bad', 'few pimples', 'clean'],
     chart: true,
     color: '#38bdf8',
@@ -69,30 +79,34 @@ export const FIELDS = [
   {
     key: 'stuhlgang',
     label: 'Stuhlgang',
+    emoji: '💩',
     options: ['soft', 'normal', 'hard'],
     chart: false,
-    color: '#a3a3a3',
+    color: '#b08968',
   },
   {
     key: 'fighting',
     label: 'Fighting with Pascal',
+    emoji: '💢',
     options: ['no', 'light', 'strong'],
     chart: true,
-    color: '#fb923c',
+    color: '#fb7185',
   },
   {
     key: 'sex',
     label: 'Sex',
+    emoji: '💗',
     options: ['no', 'yes', 'self'],
     chart: true,
-    color: '#e879f9',
+    color: '#ec4899',
   },
   {
     key: 'food',
-    label: 'Food (what I ate)',
+    label: 'Food',
+    emoji: '🍽️',
     type: 'text',
     chart: false,
-    color: '#facc15',
+    color: '#eab308',
   },
 ]
 

@@ -141,21 +141,23 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
-      <header className="max-w-2xl mx-auto px-4 pt-5 pb-1 flex items-center justify-between">
+      <header className="max-w-2xl mx-auto px-4 pt-5 pb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <h1 className="text-lg font-bold text-stone-100">🌸 Mood Tracker</h1>
+          <h1 className="font-display text-2xl font-bold" style={{ color: 'var(--ink)' }}>
+            🌸 Mood
+          </h1>
           <SyncBadge status={cloud} />
         </div>
-        <div className="flex gap-1 text-xs">
+        <div className="flex gap-1.5 text-xs font-bold">
           <button
             onClick={exportData}
-            className="px-2 py-1 rounded-md bg-white/5 border border-white/10 text-stone-400"
+            className="px-3 py-1.5 rounded-full card text-violet-500 active:scale-95 transition"
           >
             Export
           </button>
           <button
             onClick={() => fileInput.current?.click()}
-            className="px-2 py-1 rounded-md bg-white/5 border border-white/10 text-stone-400"
+            className="px-3 py-1.5 rounded-full card text-violet-500 active:scale-95 transition"
           >
             Import
           </button>
@@ -181,8 +183,8 @@ export default function App() {
         <Dashboard state={state} />
       )}
 
-      <nav className="fixed bottom-0 inset-x-0 bg-[#15151c] border-t border-white/10">
-        <div className="max-w-2xl mx-auto grid grid-cols-2">
+      <nav className="fixed bottom-0 inset-x-0 z-20 bg-white/80 backdrop-blur-md border-t border-violet-100 pb-[env(safe-area-inset-bottom)]">
+        <div className="max-w-2xl mx-auto grid grid-cols-2 p-2 gap-2">
           <TabButton active={tab === 'entry'} onClick={() => setTab('entry')} label="Track" icon="✍️" />
           <TabButton
             active={tab === 'dashboard'}
@@ -199,13 +201,17 @@ export default function App() {
 function SyncBadge({ status }) {
   if (status === 'off') return null
   const map = {
-    syncing: { text: 'Syncing…', color: '#a8a29e' },
-    ok: { text: '● Synced', color: '#34d399' },
-    error: { text: '● Local only', color: '#fbbf24' },
+    syncing: { text: 'Syncing…', color: '#a89f2f', bg: '#fbfbe8' },
+    ok: { text: '● Synced', color: '#16a34a', bg: '#e9fbef' },
+    error: { text: '● Local only', color: '#b4780a', bg: '#fef6e6' },
   }
   const s = map[status] || map.syncing
   return (
-    <span className="text-[11px]" style={{ color: s.color }} title="Cross-device sync status">
+    <span
+      className="text-[11px] font-bold rounded-full px-2 py-0.5"
+      style={{ color: s.color, background: s.bg }}
+      title="Cross-device sync status"
+    >
       {s.text}
     </span>
   )
@@ -215,8 +221,12 @@ function TabButton({ active, onClick, label, icon }) {
   return (
     <button
       onClick={onClick}
-      className="py-3 flex flex-col items-center gap-0.5 text-xs transition-colors"
-      style={{ color: active ? '#a78bfa' : '#78716c' }}
+      className="py-2.5 rounded-2xl flex flex-col items-center gap-0.5 text-xs font-bold transition-all"
+      style={
+        active
+          ? { color: '#7c3aed', background: 'linear-gradient(135deg,#f3e9ff,#ede4ff)' }
+          : { color: '#a79fb2', background: 'transparent' }
+      }
     >
       <span className="text-lg">{icon}</span>
       {label}

@@ -7,7 +7,7 @@ import { shortLabel, longLabel } from '../dates.js'
 // value are plotted at the "neutral" baseline and drawn as a RED dot so missing
 // data is obvious while the line stays continuous.
 export default function Chart({ field, options, days }) {
-  const NULL_COLOR = '#ef4444'
+  const NULL_COLOR = '#f43f5e'
   const nIdx = neutralIndex(options)
   const maxIdx = Math.max(options.length - 1, 1)
 
@@ -40,15 +40,17 @@ export default function Chart({ field, options, days }) {
   })
 
   const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.cx} ${p.cy}`).join(' ')
-
-  // Show a manageable number of x labels.
   const labelEvery = Math.max(1, Math.ceil(days.length / 8))
 
   return (
-    <div className="rounded-xl bg-white/[0.03] border border-white/10 p-3">
-      <div className="flex items-center gap-2 mb-1 px-1">
-        <span className="w-2.5 h-2.5 rounded-full" style={{ background: field.color }} />
-        <h3 className="text-sm font-semibold text-stone-200">{field.label}</h3>
+    <div className="card p-4">
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-lg" aria-hidden="true">
+          {field.emoji}
+        </span>
+        <h3 className="text-[15px] font-bold" style={{ color: 'var(--ink)' }}>
+          {field.label}
+        </h3>
       </div>
       <div className="overflow-x-auto">
         <svg
@@ -66,33 +68,32 @@ export default function Chart({ field, options, days }) {
                 x2={mL + plotW}
                 y1={y(idx)}
                 y2={y(idx)}
-                stroke="rgba(255,255,255,0.07)"
+                stroke="rgba(140,110,180,0.13)"
               />
-              <text x={mL - 8} y={y(idx) + 4} textAnchor="end" fontSize="11" fill="#a8a29e">
+              <text x={mL - 8} y={y(idx) + 4} textAnchor="end" fontSize="11" fontWeight="600" fill="#9089a0">
                 {opt}
               </text>
             </g>
           ))}
 
           {/* Connecting line */}
-          <path d={linePath} fill="none" stroke={field.color} strokeWidth="2" opacity="0.55" />
+          <path d={linePath} fill="none" stroke={field.color} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" opacity="0.5" />
 
           {/* Dots */}
           {points.map((p) => (
-            <g key={p.key}>
-              <circle
-                cx={p.cx}
-                cy={p.cy}
-                r={p.isNull ? 3.5 : 4.5}
-                fill={p.isNull ? NULL_COLOR : field.color}
-                stroke="#0f0f14"
-                strokeWidth="1"
-              >
-                <title>
-                  {longLabel(p.key)}: {p.isNull ? 'no value' : p.val}
-                </title>
-              </circle>
-            </g>
+            <circle
+              key={p.key}
+              cx={p.cx}
+              cy={p.cy}
+              r={p.isNull ? 3.5 : 5}
+              fill={p.isNull ? NULL_COLOR : field.color}
+              stroke="#ffffff"
+              strokeWidth="1.5"
+            >
+              <title>
+                {longLabel(p.key)}: {p.isNull ? 'no value' : p.val}
+              </title>
+            </circle>
           ))}
 
           {/* X labels */}
@@ -104,7 +105,8 @@ export default function Chart({ field, options, days }) {
                 y={height - 22}
                 textAnchor="middle"
                 fontSize="10"
-                fill="#78716c"
+                fontWeight="600"
+                fill="#b3adbf"
               >
                 {shortLabel(p.key)}
               </text>

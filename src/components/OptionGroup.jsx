@@ -1,9 +1,11 @@
 import { useState } from 'react'
+import FieldCard from './FieldCard.jsx'
 
 // A row of selectable pills. Clicking the active pill again clears the value
 // (every field is optional). `editable` fields show a "+ add" control.
 export default function OptionGroup({
   label,
+  emoji,
   options,
   value,
   color,
@@ -22,8 +24,7 @@ export default function OptionGroup({
   }
 
   return (
-    <div className="py-3 border-b border-white/5">
-      <div className="text-sm font-medium text-stone-300 mb-2">{label}</div>
+    <FieldCard emoji={emoji} label={label}>
       <div className="flex flex-wrap gap-2">
         {options.map((opt) => {
           const active = value === opt
@@ -32,11 +33,11 @@ export default function OptionGroup({
               key={opt}
               type="button"
               onClick={() => onChange(active ? null : opt)}
-              className="px-3 py-1.5 rounded-full text-sm border transition-colors"
+              className={`pill ${active ? '' : 'pill-idle'}`}
               style={
                 active
-                  ? { background: color, borderColor: color, color: '#0f0f14', fontWeight: 600 }
-                  : { borderColor: 'rgba(255,255,255,0.15)', color: '#d6d3d1' }
+                  ? { background: color, color: '#fff', boxShadow: `0 4px 12px ${color}55` }
+                  : undefined
               }
             >
               {opt}
@@ -59,12 +60,13 @@ export default function OptionGroup({
                   }
                 }}
                 placeholder="new option"
-                className="px-2 py-1 rounded-full text-sm bg-white/10 border border-white/20 outline-none w-28"
+                className="px-3 py-2 rounded-full text-sm bg-violet-50 border border-violet-200 outline-none w-28"
               />
               <button
                 type="button"
                 onClick={commitAdd}
-                className="px-2 py-1.5 rounded-full text-sm bg-white/10 border border-white/20"
+                className="pill"
+                style={{ background: color, color: '#fff' }}
               >
                 ✓
               </button>
@@ -73,12 +75,12 @@ export default function OptionGroup({
             <button
               type="button"
               onClick={() => setAdding(true)}
-              className="px-3 py-1.5 rounded-full text-sm border border-dashed border-white/25 text-stone-400"
+              className="pill pill-idle border-dashed"
             >
               + add
             </button>
           ))}
       </div>
-    </div>
+    </FieldCard>
   )
 }

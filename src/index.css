@@ -2,13 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --ink: #4b4358; /* main text — warm plum-grey, softer than black */
+  --ink-soft: #9089a0; /* secondary text */
+  --card: #ffffff;
+  --line: rgba(120, 90, 160, 0.1);
+  --accent: #a855f7;
+  --radius: 22px;
+  --shadow: 0 6px 20px rgba(150, 110, 190, 0.1), 0 2px 6px rgba(120, 90, 160, 0.06);
+}
+
 html {
   -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
-  background: #0f0f14;
-  color: #e7e5e4;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--ink);
+  font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* soft pastel wash: pink → lavender → sky */
+  background: linear-gradient(165deg, #fdeff7 0%, #f5f0ff 48%, #eef6ff 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.font-display {
+  font-family: 'Baloo 2', 'Nunito', system-ui, sans-serif;
+}
+
+@layer components {
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+  }
+
+  /* Base look for a selectable pill; the active colour is set inline per field. */
+  .pill {
+    border-radius: 9999px;
+    padding: 0.5rem 0.95rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1.5px solid transparent;
+    transition: transform 0.08s ease, background 0.15s ease, box-shadow 0.15s ease;
+    cursor: pointer;
+  }
+  .pill:active {
+    transform: scale(0.94);
+  }
+  .pill-idle {
+    background: #f6f2fb;
+    color: #6f6880;
+    border-color: rgba(120, 90, 160, 0.12);
+  }
+}
+
+/* Friendlier native date/checkbox accent */
+input[type='date'],
+input[type='checkbox'] {
+  accent-color: var(--accent);
 }

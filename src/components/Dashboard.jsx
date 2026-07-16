@@ -34,18 +34,18 @@ export default function Dashboard({ state }) {
   const curCycle = cycleDay(state.entries, today)
 
   return (
-    <div className="max-w-2xl mx-auto px-4 pb-24">
-      <div className="flex items-center justify-between py-4 gap-3 flex-wrap sticky top-0 bg-[#0f0f14] z-10">
-        <div className="flex gap-1 bg-white/5 rounded-lg p-1">
+    <div className="max-w-2xl mx-auto px-4 pb-28">
+      <div className="flex items-center justify-between py-3 gap-3 flex-wrap">
+        <div className="flex gap-1 card p-1">
           {RANGES.map((r) => (
             <button
               key={r.label}
               onClick={() => setRangeDays(r.days)}
-              className="px-3 py-1 rounded-md text-sm transition-colors"
+              className="px-3.5 py-1.5 rounded-full text-sm font-bold transition-all"
               style={
                 rangeDays === r.days
-                  ? { background: '#a78bfa', color: '#0f0f14', fontWeight: 600 }
-                  : { color: '#d6d3d1' }
+                  ? { background: 'linear-gradient(135deg,#a855f7,#8b5cf6)', color: '#fff' }
+                  : { color: '#a79fb2' }
               }
             >
               {r.label}
@@ -53,18 +53,20 @@ export default function Dashboard({ state }) {
           ))}
         </div>
         {curCycle != null && (
-          <div className="text-sm text-rose-300">Cycle day {curCycle}</div>
+          <div className="text-sm font-extrabold text-rose-500 bg-rose-50 rounded-full px-3 py-1.5">
+            🌸 Cycle day {curCycle}
+          </div>
         )}
       </div>
 
-      <div className="flex items-center gap-2 text-xs text-stone-400 mb-3 px-1">
-        <span className="inline-flex items-center gap-1">
-          <span className="w-2.5 h-2.5 rounded-full bg-red-500" /> = no value that day
-          (shown at neutral)
+      <div className="flex items-center gap-2 text-xs font-semibold mb-3 px-1" style={{ color: 'var(--ink-soft)' }}>
+        <span className="inline-flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#f43f5e' }} /> a red dot
+          means no value that day (shown at neutral)
         </span>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid gap-3">
         {chartFields.map((f) => (
           <Chart key={f.key} field={f} options={optionsFor(f, state)} days={days} />
         ))}

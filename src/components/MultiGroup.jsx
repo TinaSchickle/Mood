@@ -1,6 +1,8 @@
+import FieldCard from './FieldCard.jsx'
+
 // A row of multi-select pills (checkboxes). `value` is an array of chosen
 // options; clicking toggles membership. Optional, like everything else.
-export default function MultiGroup({ label, options, value, color, onChange }) {
+export default function MultiGroup({ label, emoji, options, value, color, onChange }) {
   const selected = Array.isArray(value) ? value : []
 
   function toggle(opt) {
@@ -11,8 +13,7 @@ export default function MultiGroup({ label, options, value, color, onChange }) {
   }
 
   return (
-    <div className="py-3 border-b border-white/5">
-      <div className="text-sm font-medium text-stone-300 mb-2">{label}</div>
+    <FieldCard emoji={emoji} label={label}>
       <div className="flex flex-wrap gap-2">
         {options.map((opt) => {
           const active = selected.includes(opt)
@@ -21,11 +22,11 @@ export default function MultiGroup({ label, options, value, color, onChange }) {
               key={opt}
               type="button"
               onClick={() => toggle(opt)}
-              className="px-3 py-1.5 rounded-full text-sm border transition-colors"
+              className={`pill ${active ? '' : 'pill-idle'}`}
               style={
                 active
-                  ? { background: color, borderColor: color, color: '#0f0f14', fontWeight: 600 }
-                  : { borderColor: 'rgba(255,255,255,0.15)', color: '#d6d3d1' }
+                  ? { background: color, color: '#fff', boxShadow: `0 4px 12px ${color}55` }
+                  : undefined
               }
             >
               {active ? '✓ ' : ''}
@@ -34,6 +35,6 @@ export default function MultiGroup({ label, options, value, color, onChange }) {
           )
         })}
       </div>
-    </div>
+    </FieldCard>
   )
 }

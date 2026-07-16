@@ -1,15 +1,17 @@
+import FieldCard from './FieldCard.jsx'
+
 // A free-text field (e.g. "what I ate today"). Saves as a plain string.
-export default function TextField({ label, value, onChange }) {
+export default function TextField({ label, emoji, value, onChange }) {
   return (
-    <div className="py-3 border-b border-white/5">
-      <div className="text-sm font-medium text-stone-300 mb-2">{label}</div>
+    <FieldCard emoji={emoji} label={label}>
       <textarea
         value={value ?? ''}
         onChange={(e) => onChange(e.target.value || null)}
         rows={2}
-        placeholder="Type anything…"
-        className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm text-stone-100 outline-none focus:border-white/30 resize-y"
+        placeholder="Type anything you like…"
+        className="w-full rounded-2xl bg-violet-50/60 border border-violet-100 px-4 py-3 text-[15px] outline-none focus:border-violet-300 resize-y"
+        style={{ color: 'var(--ink)' }}
       />
-    </div>
+    </FieldCard>
   )
 }
