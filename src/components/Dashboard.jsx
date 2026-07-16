@@ -44,8 +44,8 @@ export default function Dashboard({ state }) {
               className="px-3.5 py-1.5 rounded-full text-sm font-bold transition-all"
               style={
                 rangeDays === r.days
-                  ? { background: 'linear-gradient(135deg,#a855f7,#8b5cf6)', color: '#fff' }
-                  : { color: '#a79fb2' }
+                  ? { background: '#5b63f0', color: '#fff' }
+                  : { color: '#9aa1b3' }
               }
             >
               {r.label}

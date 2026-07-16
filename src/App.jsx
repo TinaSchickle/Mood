@@ -151,13 +151,13 @@ export default function App() {
         <div className="flex gap-1.5 text-xs font-bold">
           <button
             onClick={exportData}
-            className="px-3 py-1.5 rounded-full card text-violet-500 active:scale-95 transition"
+            className="px-3 py-1.5 rounded-full card text-indigo-500 active:scale-95 transition"
           >
             Export
           </button>
           <button
             onClick={() => fileInput.current?.click()}
-            className="px-3 py-1.5 rounded-full card text-violet-500 active:scale-95 transition"
+            className="px-3 py-1.5 rounded-full card text-indigo-500 active:scale-95 transition"
           >
             Import
           </button>
@@ -183,7 +183,7 @@ export default function App() {
         <Dashboard state={state} />
       )}
 
-      <nav className="fixed bottom-0 inset-x-0 z-20 bg-white/80 backdrop-blur-md border-t border-violet-100 pb-[env(safe-area-inset-bottom)]">
+      <nav className="fixed bottom-0 inset-x-0 z-20 bg-white/80 backdrop-blur-md border-t border-slate-200 pb-[env(safe-area-inset-bottom)]">
         <div className="max-w-2xl mx-auto grid grid-cols-2 p-2 gap-2">
           <TabButton active={tab === 'entry'} onClick={() => setTab('entry')} label="Track" icon="✍️" />
           <TabButton
@@ -224,8 +224,8 @@ function TabButton({ active, onClick, label, icon }) {
       className="py-2.5 rounded-2xl flex flex-col items-center gap-0.5 text-xs font-bold transition-all"
       style={
         active
-          ? { color: '#7c3aed', background: 'linear-gradient(135deg,#f3e9ff,#ede4ff)' }
-          : { color: '#a79fb2', background: 'transparent' }
+          ? { color: '#4f46e5', background: '#eef0fe' }
+          : { color: '#9aa1b3', background: 'transparent' }
       }
     >
       <span className="text-lg">{icon}</span>

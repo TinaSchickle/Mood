@@ -60,7 +60,7 @@ export default function OptionGroup({
                   }
                 }}
                 placeholder="new option"
-                className="px-3 py-2 rounded-full text-sm bg-violet-50 border border-violet-200 outline-none w-28"
+                className="px-3 py-2 rounded-full text-sm bg-indigo-50 border border-indigo-200 outline-none w-28"
               />
               <button
                 type="button"

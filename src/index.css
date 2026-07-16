@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 :root {
-  --ink: #4b4358; /* main text — warm plum-grey, softer than black */
-  --ink-soft: #9089a0; /* secondary text */
+  --ink: #353b4d; /* main text — modern slate */
+  --ink-soft: #8990a3; /* secondary text */
   --card: #ffffff;
-  --line: rgba(120, 90, 160, 0.1);
-  --accent: #a855f7;
-  --radius: 22px;
-  --shadow: 0 6px 20px rgba(150, 110, 190, 0.1), 0 2px 6px rgba(120, 90, 160, 0.06);
+  --line: rgba(70, 90, 140, 0.1);
+  --accent: #5b63f0; /* fresh modern indigo */
+  --radius: 20px;
+  --shadow: 0 6px 22px rgba(60, 80, 150, 0.07), 0 2px 6px rgba(60, 80, 140, 0.05);
 }
 
 html {
@@ -20,14 +20,15 @@ body {
   margin: 0;
   color: var(--ink);
   font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  /* soft pastel wash: pink → lavender → sky */
-  background: linear-gradient(165deg, #fdeff7 0%, #f5f0ff 48%, #eef6ff 100%);
+  /* light, airy, cool neutral wash */
+  background: linear-gradient(180deg, #fcfdff 0%, #eef2f8 60%, #e9eef6 100%);
   background-attachment: fixed;
   min-height: 100vh;
 }
 
 .font-display {
-  font-family: 'Baloo 2', 'Nunito', system-ui, sans-serif;
+  font-family: 'Poppins', 'Nunito', system-ui, sans-serif;
+  letter-spacing: -0.01em;
 }
 
 @layer components {
@@ -35,7 +36,7 @@ body {
     background: var(--card);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.7);
   }
 
   /* Base look for a selectable pill; the active colour is set inline per field. */
@@ -52,9 +53,9 @@ body {
     transform: scale(0.94);
   }
   .pill-idle {
-    background: #f6f2fb;
-    color: #6f6880;
-    border-color: rgba(120, 90, 160, 0.12);
+    background: #eef1f7;
+    color: #5c6478;
+    border-color: rgba(80, 100, 150, 0.12);
   }
 }
 
