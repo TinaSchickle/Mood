@@ -30,15 +30,15 @@ export default function App() {
         if (cancelled || !remote) return
         setState((local) => {
           const entries = { ...local.entries, ...remote.entries } // cloud wins per day
-          const moodOverallOptions = remote.moodOverallOptions?.length
-            ? remote.moodOverallOptions
-            : local.moodOverallOptions
+          const customOptions = remote.customOptions || local.customOptions || {}
           // Push up any days that only existed locally (e.g. entered offline).
           for (const [d, v] of Object.entries(local.entries)) {
             if (!(d in remote.entries)) upsertDay(d, v).catch(() => {})
           }
-          if (!remote.moodOverallOptions?.length) upsertOptions(moodOverallOptions).catch(() => {})
-          return { entries, moodOverallOptions }
+          if (!remote.customOptions && Object.keys(customOptions).length) {
+            upsertOptions(customOptions).catch(() => {})
+          }
+          return { entries, customOptions }
         })
         setCloud('ok')
       } catch (err) {
@@ -53,9 +53,7 @@ export default function App() {
         if (cancelled || !remote) return
         setState((local) => ({
           entries: { ...local.entries, ...remote.entries },
-          moodOverallOptions: remote.moodOverallOptions?.length
-            ? remote.moodOverallOptions
-            : local.moodOverallOptions,
+          customOptions: remote.customOptions || local.customOptions || {},
         }))
       } catch {
         /* ignore transient realtime refetch errors */
@@ -91,13 +89,14 @@ export default function App() {
     })
   }
 
-  function addMoodOption(opt) {
+  // Add a custom option to an editable field (e.g. "Mood in detail", "What sport").
+  function addOption(fieldKey, opt) {
     setState((s) => {
-      const opts = s.moodOverallOptions || []
-      if (opts.includes(opt)) return s
-      const moodOverallOptions = [...opts, opt]
-      if (isCloudConfigured) upsertOptions(moodOverallOptions).catch(() => setCloud('error'))
-      return { ...s, moodOverallOptions }
+      const existing = s.customOptions?.[fieldKey] || []
+      if (existing.includes(opt)) return s
+      const customOptions = { ...s.customOptions, [fieldKey]: [...existing, opt] }
+      if (isCloudConfigured) upsertOptions(customOptions).catch(() => setCloud('error'))
+      return { ...s, customOptions }
     })
   }
 
@@ -121,12 +120,12 @@ export default function App() {
         if (parsed && parsed.entries) {
           const next = {
             entries: parsed.entries,
-            moodOverallOptions: parsed.moodOverallOptions || state.moodOverallOptions,
+            customOptions: parsed.customOptions || state.customOptions || {},
           }
           setState(next)
           if (isCloudConfigured) {
             for (const [d, v] of Object.entries(next.entries)) upsertDay(d, v).catch(() => {})
-            upsertOptions(next.moodOverallOptions).catch(() => {})
+            upsertOptions(next.customOptions).catch(() => {})
           }
         } else {
           alert('That file does not look like a Mood Tracker export.')
@@ -177,7 +176,7 @@ export default function App() {
           date={date}
           setDate={setDate}
           updateDay={updateDay}
-          addMoodOption={addMoodOption}
+          addOption={addOption}
         />
       ) : (
         <Dashboard state={state} />

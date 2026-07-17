@@ -4,7 +4,7 @@ import OptionGroup from './OptionGroup.jsx'
 import MultiGroup from './MultiGroup.jsx'
 import TextField from './TextField.jsx'
 
-export default function EntryTab({ state, date, setDate, updateDay, addMoodOption }) {
+export default function EntryTab({ state, date, setDate, updateDay, addOption }) {
   const entry = state.entries[date] || {}
   const day = cycleDay(state.entries, date)
 
@@ -110,6 +110,8 @@ export default function EntryTab({ state, date, setDate, updateDay, addMoodOptio
               value={entry[f.key] ?? null}
               color={f.color}
               onChange={(v) => setField(f.key, v)}
+              editable={f.editable}
+              onAddOption={(opt) => addOption(f.key, opt)}
             />
           )
         }
@@ -123,7 +125,7 @@ export default function EntryTab({ state, date, setDate, updateDay, addMoodOptio
             color={f.color}
             onChange={(v) => setField(f.key, v)}
             editable={f.editable}
-            onAddOption={addMoodOption}
+            onAddOption={(opt) => addOption(f.key, opt)}
           />
         )
       })}

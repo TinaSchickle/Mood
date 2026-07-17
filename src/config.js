@@ -1,21 +1,18 @@
 // Definition of every trackable field.
 //
 // `options`      – the ordered list of choices (low → high where it matters).
-//                  `null` means the options are user-editable (stored in state).
 // `type`         – 'single' (pills, default), 'multi' (checkboxes) or 'text'.
+// `editable`     – user can add custom options (stored in state.customOptions).
 // `chart`        – whether this field gets its own dashboard diagram.
 // `color`        – line/dot colour for the chart (never pure red – red is
 //                  reserved for "no value on this day" markers).
 // `emoji`        – a friendly icon shown next to the label.
-export const DEFAULT_MOOD_OVERALL = ['negative', 'neutral', 'positive']
-
 export const FIELDS = [
   {
     key: 'moodOverall',
     label: 'Mood',
     emoji: '🌈',
-    options: null, // editable – see DEFAULT_MOOD_OVERALL / state.moodOverallOptions
-    editable: true,
+    options: ['negative', 'neutral', 'positive'],
     chart: true,
     color: '#a855f7',
   },
@@ -24,6 +21,7 @@ export const FIELDS = [
     label: 'Mood in detail',
     emoji: '💭',
     options: ['happy', 'irritable', 'sad'],
+    editable: true,
     chart: false,
     color: '#f472b6',
   },
@@ -49,6 +47,7 @@ export const FIELDS = [
     emoji: '🏐',
     options: ['volleyball', 'gym', 'home gym', 'running'],
     type: 'multi',
+    editable: true,
     chart: false,
     color: '#4ade80',
   },
@@ -110,14 +109,15 @@ export const FIELDS = [
   },
 ]
 
-// Resolve the option list for a field, honouring editable fields.
+// Resolve the option list for a field. Editable fields append any custom
+// options the user has added (stored per field key in state.customOptions).
 export function optionsFor(field, state) {
-  if (field.key === 'moodOverall') {
-    return state.moodOverallOptions?.length
-      ? state.moodOverallOptions
-      : DEFAULT_MOOD_OVERALL
+  const base = field.options || []
+  if (field.editable) {
+    const extra = state.customOptions?.[field.key] || []
+    return [...base, ...extra.filter((o) => !base.includes(o))]
   }
-  return field.options
+  return base
 }
 
 // The index used to plot a day that has no value ("neutral" baseline).

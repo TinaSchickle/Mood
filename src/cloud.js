@@ -5,7 +5,7 @@ export { isCloudConfigured }
 // Shape:
 //   mood_days      : date (text pk) | data (jsonb) | updated_at
 //   mood_settings  : key  (text pk) | value (jsonb) | updated_at
-const OPTIONS_KEY = 'moodOverallOptions'
+const OPTIONS_KEY = 'customOptions'
 
 // Pull the whole dataset from the cloud. Returns null when not configured.
 export async function fetchAll() {
@@ -19,9 +19,9 @@ export async function fetchAll() {
   const entries = {}
   for (const row of daysRes.data || []) entries[row.date] = row.data || {}
 
-  let moodOverallOptions = null
-  if (!setRes.error && setRes.data) moodOverallOptions = setRes.data.value
-  return { entries, moodOverallOptions }
+  let customOptions = null
+  if (!setRes.error && setRes.data) customOptions = setRes.data.value
+  return { entries, customOptions }
 }
 
 export async function upsertDay(date, data) {
@@ -32,12 +32,12 @@ export async function upsertDay(date, data) {
   if (error) throw error
 }
 
-export async function upsertOptions(options) {
+export async function upsertOptions(customOptions) {
   if (!supabase) return
   const { error } = await supabase
     .from('mood_settings')
     .upsert(
-      { key: OPTIONS_KEY, value: options, updated_at: new Date().toISOString() },
+      { key: OPTIONS_KEY, value: customOptions, updated_at: new Date().toISOString() },
       { onConflict: 'key' },
     )
   if (error) throw error

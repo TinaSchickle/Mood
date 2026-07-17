@@ -1,10 +1,8 @@
-import { DEFAULT_MOOD_OVERALL } from './config.js'
-
 const KEY = 'mood-tracker-v1'
 
 const empty = () => ({
   entries: {}, // { 'YYYY-MM-DD': { moodOverall, energy, ..., periodStart } }
-  moodOverallOptions: [...DEFAULT_MOOD_OVERALL],
+  customOptions: {}, // { [fieldKey]: [extra option strings] }
 })
 
 export function load() {
@@ -14,9 +12,7 @@ export function load() {
     const parsed = JSON.parse(raw)
     return {
       entries: parsed.entries || {},
-      moodOverallOptions: parsed.moodOverallOptions?.length
-        ? parsed.moodOverallOptions
-        : [...DEFAULT_MOOD_OVERALL],
+      customOptions: parsed.customOptions || {},
     }
   } catch {
     return empty()
